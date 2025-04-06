@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چۆن مرۆڤ بتوانێت خۆی دروست بکات</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap');
+        
+        /* Splash Screen Styles */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4a69bd 0%, #3c6382 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeOut 1s ease-in-out 3s forwards;
+        }
+        
+        .splash-logo {
+            width: 150px;
+            height: 150px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: bounce 1.5s infinite, rotate 4s linear infinite;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .splash-logo i {
+            font-size: 4rem;
+            color: #4a69bd;
+        }
+        
+        .splash-title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-family: 'Scheherazade New', serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: slideIn 1s ease-out;
+        }
+        
+        .splash-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            font-family: 'Scheherazade New', serif;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        
+        .splash-footer {
+            position: absolute;
+            bottom: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            font-family: 'Scheherazade New', serif;
+            animation: fadeIn 2s ease-in-out;
+        }
+        
+        .progress-container {
+            width: 200px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin-top: 30px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: white;
+            animation: progressLoad 3s linear forwards;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+        
+        @keyframes progressLoad {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        /* Main Content Styles */
+        body {
+            font-family: 'Scheherazade New', serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.8;
+            display: none; /* Hidden initially, shown after splash */
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        
+        .logo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        h1 {
+            font-size: 2.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+        }
+        
+        .content-box {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            animation: slideUp 1s ease-out;
+        }
+        
+        h2 {
+            border-right: 4px solid #f8c291;
+            padding-right: 15px;
+            margin-top: 0;
+        }
+        
+        .steps {
+            counter-reset: step-counter;
+        }
+        
+        .step {
+            position: relative;
+            padding-right: 40px;
+            margin-bottom: 25px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        .step:before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #4a69bd;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .nav-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4a69bd 0%, #3c6382 100%);
+            color: white;
+            text-align: center;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(74, 105, 189, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 105, 189, 0.6);
+        }
+        
+        .quote {
+            font-style: italic;
+            background: #f8f9fa;
+            border-right: 4px solid #f8c291;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* Page 1 specific styles */
+        .page1 {
+            display: block;
+        }
+        
+        .page1 .logo {
+            background: #4a69bd;
+            box-shadow: 0 8px 20px rgba(74, 105, 189, 0.3);
+        }
+        
+        .page1 h1 {
+            color: #3c6382;
+        }
+        
+        .page1 .subtitle {
+            color: #6a89cc;
+        }
+        
+        .page1 h2 {
+            color: #4a69bd;
+        }
+        
+        /* Page 2 specific styles */
+        .page2 {
+            display: none;
+        }
+        
+        .page2 .logo {
+            background: #e55039;
+            box-shadow: 0 8px 20px rgba(229, 80, 57, 0.3);
+        }
+        
+        .page2 h1 {
+            color: #e55039;
+        }
+        
+        .page2 .subtitle {
+            color: #fa983a;
+        }
+        
+        .page2 h2 {
+            color: #e55039;
+            border-right: 4px solid #4a69bd;
+        }
+        
+        .strategy-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-right: 4px solid #4a69bd;
+            transition: transform 0.3s;
+        }
+        
+        .strategy-box:hover {
+            transform: translateX(-10px);
+        }
+        
+        .strategy-title {
+            color: #3c6382;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .strategy-icon {
+            margin-left: 10px;
+            color: #e55039;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #e55039, #fa983a);
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            transition: width 1s ease-in-out;
+        }
+        
+        .success-story {
+            background: #f1f2f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #38ada9;
+        }
+        
+        .success-title {
+            color: #38ada9;
+            font-weight: bold;
+        }
+        
+        /* Page 3 specific styles */
+        .page3 {
+            display: none;
+        }
+        
+        .page3 .logo {
+            background: #38ada9;
+            box-shadow: 0 8px 20px rgba(56, 173, 169, 0.3);
+        }
+        
+        .page3 h1 {
+            color: #38ada9;
+        }
+        
+        .page3 .subtitle {
+            color: #079992;
+        }
+        
+        .page3 h2 {
+            color: #38ada9;
+            border-right: 4px solid #f8c291;
+        }
+        
+        .success-trait {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #38ada9;
+            transition: transform 0.3s;
+        }
+        
+        .success-trait:hover {
+            transform: translateY(-5px);
+        }
+        
+        .trait-title {
+            color: #3c6382;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .trait-icon {
+            margin-left: 10px;
+            color: #38ada9;
+        }
+        
+        .success-quote {
+            font-style: italic;
+            background: #e8f8f7;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-right: 4px solid #38ada9;
+        }
+        
+        .success-example {
+            background: #f1f2f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid #e55039;
+        }
+        
+        .example-title {
+            color: #e55039;
+            font-weight: bold;
+        }
+        
+        /* Page 4 specific styles - Task Management */
+        .page4 {
+            display: none;
+        }
+        
+        .page4 .logo {
+            background: #8e44ad;
+            box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3);
+        }
+        
+        .page4 h1 {
+            color: #8e44ad;
+        }
+        
+        .page4 .subtitle {
+            color: #9b59b6;
+        }
+        
+        .page4 h2 {
+            color: #8e44ad;
+            border-right: 4px solid #f8c291;
+        }
+        
+        .task-method {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #8e44ad;
+            transition: transform 0.3s;
+        }
+        
+        .task-method:hover {
+            transform: translateY(-5px);
+        }
+        
+        .method-title {
+            color: #3c6382;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .method-icon {
+            margin-left: 10px;
+            color: #8e44ad;
+        }
+        
+        .task-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .task-matrix th, .task-matrix td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .task-matrix th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .urgent-important {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .not-urgent-important {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .urgent-not-important {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .not-urgent-not-important {
+            background-color: #bdc3c7;
+        }
+        
+        .task-tip {
+            background: #f5eef8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-right: 3px solid #8e44ad;
+        }
+        
+        .tip-title {
+            color: #8e44ad;
+            font-weight: bold;
+        }
+        
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div class="splash-screen">
+        <div class="splash-logo">
+            <i class="fas fa-user-edit"></i>
+        </div>
+        <h1 class="splash-title">rawaz</h1>
+        <p class="splash-subtitle">بەخێربێن بۆ نەرمەکالم</p>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <div class="splash-footer">created by rawaz</div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="main-content">
+        <!-- Page 1 Content -->
+        <div class="container page1" id="page1">
+            <header>
+                <div class="logo">خۆ</div>
+                <h1>چۆن مرۆڤ بتوانێت خۆی دروست بکات</h1>
+                <p class="subtitle">ڕێگایەکی نوێ بۆ گەشەکردنی کەسایەتی و تواناکان</p>
+            </header>
+            
+            <div class="content-box">
+                <h2>پێشەکی</h2>
+                <p>دروستکردنی خۆمان پرۆسەیەکی بەردەوامە کە پێویستی بە هەوڵ و زانست و تێگەیشتن هەیە. ئەم پەڕەیە ڕێنماییە گرنگەکانت پێدەدات بۆ ئەوەی بتوانیت باشترین وێنەی خۆت دروست بکەیت.</p>
+                
+                <div class="quote">
+                    "مرۆڤ تەنیا دروست ناکرێت، خۆی دەتوانێت خۆی دروست بکات." - فریدریش نیچە
+                </div>
+            </div>
+            
+            <div class="content-box steps">
+                <h2>ڕێگاکان بۆ دروستکردنی خۆت</h2>
+                
+                <div class="step">
+                    <h3>خۆناسین</h3>
+                    <p>یەکەم هەنگاو بۆ دروستکردنی خۆت، ناسینەوەی خۆتە. تایبەتمەندییەکانی کەسایەتی، تواناکان و لاوازییەکانت بدۆزەرەوە.</p>
+                </div>
+                
+                <div class="step">
+                    <h3>ئامانج دانان</h3>
+                    <p>ئامانجی ڕوون و دیاریکراوت بۆ خۆت دابنێ. ئامانجەکانت بکە بە چەند هەنگاوێکی بچووک و ئاسان.</p>
+                </div>
+                
+                <div class="step">
+                    <h3>فێربوونی بەردەوام</h3>
+                    <p>هەمیشە بەدوای زانست و شارەزاییدا بکەو. فێربوون تەنیا لە قوتابخانە نایەتە کۆتایی، بەڵکو پرۆسەیەکی ژیانییە.</p>
+                </div>
+                
+                <div class="step">
+                    <h3>کارکردن لەسەر خۆت</h3>
+                    <p>هەموو ڕۆژێک کاتێک تەرخان بکە بۆ گەشەکردنی کەسایەتی و تواناکانی خۆت. ئەمە ڕێگایەکی درێژخایەنە بەڵام کاریگەرە.</p>
+                </div>
+                
+                <div class="step">
+                    <h3>پەیوەندی باش</h3>
+                    <p>خەڵکی کاریگەر و ئینسپایەر بە دەوری خۆت کۆبکەرەوە. پەیوەندییەکانت ڕێگایەکی گرنگە بۆ گەشەکردن.</p>
+                </div>
+                
+                <div class="nav-buttons">
+                    <a href="#" class="nav-btn" onclick="showPage('page2')">بڕۆ بۆ پەڕەی دووەم ⟶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2 Content -->
+        <div class="container page2" id="page2">
+            <header>
+                <div class="logo">ئامانج</div>
+                <h1>گەیشتن بە ئامانجەکانمان</h1>
+                <p class="subtitle">ستراتیژی و ڕێگاکان بۆ گەیشتن بە ئامانجەکان</p>
+            </header>
+            
+            <div class="content-box">
+                <h2>پێشەکی</h2>
+                <p>گەیشتن بە ئامانج پرۆسەیەکی پلانبەندیکراوە و پێویستی بە نەخشەسازی و جەختکردنەوەیە. ئەم پەڕەیە ڕێگا کاریگەرەکانت پێدەدات بۆ گەیشتن بە ئامانجەکانت.</p>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 75%">75% تەواو</div>
+                </div>
+            </div>
+            
+            <div class="content-box">
+                <h2>ستراتیژیەکانی گەیشتن بە ئامانج</h2>
+                
+                <div class="strategy-box">
+                    <div class="strategy-title">
+                        <i class="fas fa-bullseye strategy-icon"></i>
+                        ئامانجەکانت دیاری بکە
+                    </div>
+                    <p>ئامانجەکانت بە ڕوونی دیاری بکە و بیکە بە SMART (دیاریکراو، پێوانەیی، گونجاو، ڕاستەقینە، کاتبەستکراو).</p>
+                </div>
+                
+                <div class="strategy-box">
+                    <div class="strategy-title">
+                        <i class="fas fa-tasks strategy-icon"></i>
+                        دابەشکردنی ئامانجەکان
+                    </div>
+                    <p>ئامانجە گەورەکان بکە بە چەندین هەنگاوی بچووک و ئاسان. ئەمە دەبێتە هۆی زیاتر باوەڕپێکراو بوونی پرۆسەکە.</p>
+                </div>
+                
+                <div class="strategy-box">
+                    <div class="strategy-title">
+                        <i class="fas fa-calendar-alt strategy-icon"></i>
+                        کات بەستن
+                    </div>
+                    <p>بۆ هەر هەنگاوێک کاتێکی دیاریکراو دابنێ. کات بەستن یارمەتیدەرە بۆ پاراستنی پێشکەوتن.</p>
+                </div>
+                
+                <div class="strategy-box">
+                    <div class="strategy-title">
+                        <i class="fas fa-chart-line strategy-icon"></i>
+                        پێشکەوتنەکانت چاودێری بکە
+                    </div>
+                    <p>هەمیشە پێشکەوتنەکانت چاودێری بکە و خۆت لەگەڵ پلانەکەدا بەڕێوەبە. ئەگەر پێویست بوو گۆڕانکاری بکە.</p>
+                </div>
+                
+                <div class="success-story">
+                    <div class="success-title">ئەزموونی سەرکەوتن:</div>
+                    <p>"بە بەکارهێنانی ئەم ستراتیژییانە، توانیم لە ماوەی ٦ مانگدا زمانێکی بیانی فێربم. هەنگاو بە هەنگاوم جێبەجێ کرد و هەموو هەفتەیەک پێشکەوتنەکانم تۆمارم کرد." - سارا</p>
+                </div>
+                
+                <div class="nav-buttons">
+                    <a href="#" class="nav-btn" onclick="showPage('page1')">⟵ گەڕانەوە بۆ پەڕەی یەکەم</a>
+                    <a href="#" class="nav-btn" onclick="showPage('page3')">بڕۆ بۆ پەڕەی سێیەم ⟶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3 Content - How to Become a Successful Person -->
+        <div class="container page3" id="page3">
+            <header>
+                <div class="logo">سەرکەوتن</div>
+                <h1>چۆن ببین بە کەسێکی سەرکەوتوو</h1>
+                <p class="subtitle">تایبەتمەندی و ڕێگاکانی کەسایەتی سەرکەوتوو</p>
+            </header>
+            
+            <div class="content-box">
+                <h2>پێشەکی</h2>
+                <p>سەرکەوتن تەنیا بە پەرەسەندنی ماددی نایەتە دیار، بەڵکو پرۆسەیەکی هۆشمەند و تەواوی گەشەکردنی کەسایەتییە. ئەم پەڕەیە تایبەتمەندییە سەرەکییەکانی کەسایەتی سەرکەوتوو پێدەدات.</p>
+                
+                <div class="success-quote">
+                    "سەرکەوتن بریتییە لە گەیشتن بە ئامانجەکانت، بەڵام خۆشییەکە لە ڕێگاکەدایە." - دێل کارنێگی
+                </div>
+            </div>
+            
+            <div class="content-box">
+                <h2>تایبەتمەندییەکانی کەسایەتی سەرکەوتوو</h2>
+                
+                <div class="success-trait">
+                    <div class="trait-title">
+                        <i class="fas fa-brain trait-icon"></i>
+                        بیرکردنەوەی ئەرێنی
+                    </div>
+                    <p>کەسایەتی سەرکەوتوو هەمیشە بە شێوەیەکی ئەرێنی بیردەکاتەوە. ئەوان بە شێوەیەکی کونترۆڵکراو لەگەڵ کێشەکاندا ڕێکدەکەونەوە و هەمیشە ڕێگای چارەسەر دەبینن.</p>
+                    
+                    <div class="success-example">
+                        <div class="example-title">نمونە:</div>
+                        <p>کاتێک ڕووبەڕووی کێشەیەک دەبێتەوە، بە شێوەیەکی کونترۆڵکراو بیردەکاتەوە: "چۆن دەتوانم ئەم کێشەیە چارەسەر بکەم؟" نەک "بۆ ئەمە بەسەرم هاتووە!"</p>
+                    </div>
+                </div>
+                
+                <div class="success-trait">
+                    <div class="trait-title">
+                        <i class="fas fa-bullseye trait-icon"></i>
+                        ڕوونکردنەوەی ئامانج
+                    </div>
+                    <p>کەسایەتی سەرکەوتوو بە ڕوونی دەزانێت چی دەوێت و چۆن دەیەوێت. ئامانجەکانی دیاریکراو و پێوانەیین.</p>
+                    
+                    <div class="success-example">
+                        <div class="example-title">نمونە:</div>
+                        <p>بە شێوەیەکی دیاریکراو دەڵێت: "دەمەوێت لە ماوەی ٦ مانگدا ٥ کیلۆگرام کێشم کەم بکاتەوە" نەک تەنیا "دەمەوێت کێشم کەم بکاتەوە".</p>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <a href="#" class="nav-btn" onclick="showPage('page2')">⟵ گەڕانەوە بۆ پەڕەی دووەم</a>
+                    <a href="#" class="nav-btn" onclick="showPage('page4')">بڕۆ بۆ پەڕەی چوارەم ⟶</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4 Content - Task Management -->
+        <div class="container page4" id="page4">
+            <header>
+                <div class="logo">کارەکان</div>
+                <h1>چۆن کارەکانمان دابەش بکەین</h1>
+                <p class="subtitle">ڕێگاکانی بەڕێوەبردنی کاریگەری کارەکان</p>
+            </header>
+            
+            <div class="content-box">
+                <h2>پێشەکی</h2>
+                <p>بەڕێوەبردنی کاریگەری کارەکان یەکێکە لە توانا سەرەکییەکانی کەسایەتی سەرکەوتوو. ئەم پەڕەیە ڕێگاکانی دابەشکردن و پلانبەندیکردنی کارەکانت پێدەدات.</p>
+                
+                <div class="quote">
+                    "کاریگەرترین کەسەکان ئەوانەن کە دەتوانن کاری گرنگ لە کاری فریاگوزار جیا بکەنەوە." - ستیفن کۆڤی
+                </div>
+            </div>
+            
+            <div class="content-box">
+                <h2>ڕێگاکانی دابەشکردنی کارەکان</h2>
+                
+                <div class="task-method">
+                    <div class="method-title">
+                        <i class="fas fa-check-double method-icon"></i>
+                        پلانی ڕۆژانە
+                    </div>
+                    <p>هەموو شەوێک یان بەیانی زوو ٣-٥ کاری سەرەکی ڕۆژەکەت دیاری بکە. ئەم کارانە پێویستە زیاترین کاریگەرییان هەبێت لەسەر ئامانجەکانت.</p>
+                    
+                    <div class="task-tip">
+                        <div class="tip-title">ئامۆژگاری:</div>
+                        <p>کارەکانت بە پێی کاریگەرییان لەسەر ژیانت ڕێکبخە، نەک بە پێی ئاسانی یان خۆشی.</p>
+                    </div>
+                </div>
+                
+                <div class="task-method">
+                    <div class="method-title">
+                        <i class="fas fa-hourglass-half method-icon"></i>
+                        ماتریکسی کارە فریاگوزارەکان
+                    </div>
+                    <p>کارەکانت دابەش بکە بەسەر ٤ بەشدا بە پێی فریاگوزاری و گرنگی:</p>
+                    
+                    <table class="task-matrix">
+                        <tr>
+                            <th></th>
+                            <th>گرنگ</th>
+                            <th>گرنگ نییە</th>
+                        </tr>
+                        <tr>
+                            <th>فریاگوزار</th>
+                            <td class="urgent-important">١. کردنی یەکسەر</td>
+                            <td class="urgent-not-important">٣. دیاریکردنی کات</td>
+                        </tr>
+                        <tr>
+                            <th>فریاگوزار نییە</th>
+                            <td class="not-urgent-important">٢. پلانبەندیکردن</td>
+                            <td class="not-urgent-not-important">٤. نەکردن</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="task-tip">
+                        <div class="tip-title">ئامۆژگاری:</div>
+                        <p>هەوڵبدە زۆرترین کاتت بۆ بەشی ٢ (گرنگ بەڵام فریاگوزار نییە) تەرخان بکەیت، چونکە ئەم کارانە زیاترین کاریگەرییان هەیە لە درێژخایەندا.</p>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <a href="#" class="nav-btn" onclick="showPage('page3')">⟵ گەڕانەوە بۆ پەڕەی سێیەم</a>
+                    <a href="#" class="nav-btn" onclick="showPage('page1')">بڕۆ بۆ پەڕەی یەکەم ⟶</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // After splash screen animation completes, show main content
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.querySelector('.splash-screen').style.display = 'none';
+                document.querySelector('.main-content').style.display = 'block';
+                document.body.style.display = 'block';
+                showPage('page1');
+            }, 3500); // Match this with splash screen animation duration
+        });
+
+        // Function to switch between pages
+        function showPage(pageId) {
+            document.getElementById('page1').style.display = 'none';
+            document.getElementById('page2').style.display = 'none';
+            document.getElementById('page3').style.display = 'none';
+            document.getElementById('page4').style.display = 'none';
+            document.getElementById(pageId).style.display = 'block';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+            
+            // Animate progress bar on page2
+            if (pageId === 'page2') {
+                const progressBar = document.querySelector('.progress-bar');
+                progressBar.style.width = '0';
+                setTimeout(() => {
+                    progressBar.style.width = '75%';
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>
